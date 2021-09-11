@@ -55,7 +55,7 @@ get_frames_per_second_raw()
 
 split_frames()
 {
-  file_directory=$(dirname "$file_file_path")
+  file_directory=$(dirname "$file_path")
   file_name=$(basename -- "$file_path")
   file_name="${file_name%.*}"
 
@@ -64,9 +64,13 @@ split_frames()
   frames_per_second=$(get_frames_per_second_raw)
   collect_frequency=$((frames_per_second / frames_per_second_requested))
 
+  original_directory=$(pwd)
+  cd "$file_directory" || exit
   ffmpeg -i "$file_path" -vf "select=not(mod(n\,$collect_frequency))"  "$file_name%03d.jpg" -vsync vfr -hide_banner -loglevel error
+  # shellcheck disable=SC2164
+  cd "$original_directory"
 
-  echo "Saved Files to: $(pwd)"
+  echo "Saved Files to: $file_directory"
 }
 
 ### Select Menu
@@ -74,6 +78,7 @@ show_menu() {
   echo "$menu_title"
 
   PS3="$menu_prompt: "
+  # shellcheck disable=SC2034
   select operation in "${menu_options[@]}" 'Quit'; do
       case "$REPLY" in
 
