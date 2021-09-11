@@ -66,7 +66,7 @@ split_frames()
 
   original_directory=$(pwd)
   cd "$file_directory" || exit
-  ffmpeg -i "$file_path" -vf "select=not(mod(n\,$collect_frequency))"  "$file_name%03d.jpg" -vsync vfr -hide_banner -loglevel error
+  ffmpeg -i "$file_path" -vf "select=not(mod(n\,$collect_frequency))"  "${file_name}_%03d.jpg" -vsync vfr -hide_banner -loglevel error
   # shellcheck disable=SC2164
   cd "$original_directory"
 
